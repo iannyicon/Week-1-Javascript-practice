@@ -1,24 +1,33 @@
-function checkSpeed(speed) {
-    const speedLimit = 70; //Speed in km/h
-    const kmPerDemeritPoint = 5; // Every 5 km/h over the limit = 1 demerit point
-    const maxDemeritPoint = 12 //Maximum allowed demerit points
+function checkSpeed() {
+    // Prompt the user to input the speed
+    let speed = parseFloat(prompt("Enter the speed of the car (in km/s):"));
 
+    // Define the speed limit and demerit point threshold
+    const speedLimit = 70;
+    const demeritPointsPerIncrement = 1;
+    const increment = 5;
+    const maxDemeritPoints = 12;
 
-    if (speed <= speedLimt) {
-        return "Ok";
+    // Validate the input
+    if (isNaN(speed) || speed < 0) {
+        console.log("Invalid input! Speed must be a positive number.");
     } else {
-        // Calculate demerit points
-        const demeritsPoints = Math.floor ((speed - speedLimt) / kmPerDemeritPoint);
-
-        if (demeritPoints > maxDemeritPoints) {
-            return "License suspended";
+        // Check if the speed is within the limit
+        if (speed <= speedLimit) {
+            console.log("Ok");
         } else {
-            return `Points: ${demeritPoints}`;
+            // Calculate demerit points
+            const points = Math.floor((speed - speedLimit) / increment) * demeritPointsPerIncrement;
+
+            // Check if the license should be suspended
+            if (points > maxDemeritPoints) {
+                console.log("License suspended");
+            } else {
+                console.log(`Points: ${points}`);
+            }
         }
     }
 }
 
-// Example Usage
-const speed = parseInt(prompt("Enter the speed of the car (in km/h):")); //Get speed input
-console.log(result); //Print the result
-alert (result); //Show the result in an alert box
+// Call the function
+checkSpeed();

@@ -1,32 +1,29 @@
-function getGrade () {
-    console.log("getGrade function called");
-    while (true) {
-        
-        // Prompt the user for input
-        let input = prompt ("Enter your score (0-100):");
+function getStudentGrade() {
+    // Prompt the user to input marks
+    let marks = parseFloat(prompt("Enter the student's marks (between 0 and 100):"));
 
-        //Validate the input
-        let score = parseFloat(input);
-
-        if (!isNaN(score) && score >= 0 && score <= 100){ 
-            //Map the score to a grade
-            if (score >= 90) {
-                return "A";
-            } else if (score >= 80) {
-                return "B";
-            } else if (score >= 70){
-                return "C";
-            } else if (score >= 60){
-                return "D";
-            } else {
-                return "F";
-            }
+    // Validate the input
+    if (isNaN(marks) || marks < 0 || marks > 100) {
+        console.log("Invalid input! Marks must be between 0 and 100.");
+    } else {
+        // Determine the grade based on the marks
+        let grade;
+        if (marks > 79) {
+            grade = "A";
+        } else if (marks >= 60 && marks <= 79) {
+            grade = "B";
+        } else if (marks >= 50 && marks <= 59) {
+            grade = "C";
+        } else if (marks >= 40 && marks <= 49) {
+            grade = "D";
         } else {
-            alert("Invalid input. Please enter a numeric value between 0 and 100.");
+            grade = "E";
         }
+
+        // Output the grade
+        console.log(`The student's grade is: ${grade}`);
     }
-     }
-     
-        let grade = getGrade();
-        console.log("Your grade is: " + grade);
-        alert("Your grade is: " + grade);
+}
+
+// Call the function
+getStudentGrade();

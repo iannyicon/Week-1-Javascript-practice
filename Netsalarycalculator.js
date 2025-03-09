@@ -1,76 +1,88 @@
-function calculateNetSalary(grossSalary) {
+function calculateNetSalary() {
+    // Input: Basic Salary and Benefits
+    const basicSalary = parseFloat(prompt("Enter Basic Salary:"));
+    const benefits = parseFloat(prompt("Enter Benefits:"));
 
-    //Constants for tax rates, NHIF, and NSSF
-    const TAX_RATES = [
-        {min: 0, max: 24000, rate: 0.1 },
-        {min: 24001, max:32333, rate: 0.25},
-        {min: 32334, max: Infinity, rate : 0.3}
-    ];
-    const PERSONAL_RELIEF = 2400; //MONTHLY PERSONNAL RELIEF
-    const NHIF_RATES = [
-        {min:0, max:5999, amount: 150},
-        {min:6000, max:7999, amount: 300},
-        {min:8000, max:11999, amount: 400},
-        {min:12000, max:14999, amount: 500},
-        {min:15000, max:19999, amount: 600},
-        {min:20000, max:24999, amount: 750},
-        {min:25000, max:29999, amount: 850},
-        {min:30000, max:34999, amount: 900},
-        {min:35000, max:39999, amount: 950},
-        {min:40000, max:44999, amount: 1000},
-        {min:45000, max:49999, amount: 1100},
-        {min:50000, max:59999, amount: 1200},
-        {min:60000, max:69999, amount: 1300},
-        {min:70000, max:79999, amount: 1400},
-        {min:80000, max:89999, amount: 1500},
-        {min:90000, max:99999, amount: 1600},
-        {min:10000, max:Infinity, amount: 1700},
-    ];
-
-    const NSSF_RATE = 0.06; // 6% of gross salary (Tier I contribution)
-
-    // Calculate PAYE (Tax)
-    let tax = 0;
-    for (const rate of TAX_RATES) {
-        if (grossSalary > rate.min) {
-            const taxableAmount = Math.min(grossSalary, rate.max)
-            -rate.min;
-            tax += taxableAmount * rate.rate;
-        }
+    // Validate inputs
+    if (isNaN(basicSalary) || isNaN(benefits) || basicSalary < 0 || benefits < 0) {
+        console.log("Invalid input! Please enter positive numbers.");
+        return;
     }
-    
-    tax -= PERSONAL_RELIEF; //Apply personal relief
-    if (tax < 0) tax = 0; //Ensure tax is not negative
 
-    //Calculate NHIF
+    // Calculate Gross Salary
+    const grossSalary = basicSalary + benefits;
+
+    // Calculate Payee (Tax) based on KRA rates
+    let payee = 0;
+    if (grossSalary <= 24000) {
+        payee = grossSalary * 0.1;
+    } else if (grossSalary <= 32333) {
+        payee = 2400 + (grossSalary - 24000) * 0.25;
+    } else {
+        payee = 2400 + 2083.25 + (grossSalary - 32333) * 0.3;
+    }
+
+    // Calculate NHIF Deductions based on NHIF rates
     let nhif = 0;
-    for (const rate of NHIF_RATES){
-        if (grossSalary >= rate.min && grossSalary <= rate.max) {
-            nhif = rate.amount;
-            break;
-        }
+    if (grossSalary <= 5999) {
+        nhif = 150;
+    } else if (grossSalary <= 7999) {
+        nhif = 300;
+    } else if (grossSalary <= 11999) {
+        nhif = 400;
+    } else if (grossSalary <= 14999) {
+        nhif = 500;
+    } else if (grossSalary <= 19999) {
+        nhif = 600;
+    } else if (grossSalary <= 24999) {
+        nhif = 750;
+    } else if (grossSalary <= 29999) {
+        nhif = 850;
+    } else if (grossSalary <= 34999) {
+        nhif = 900;
+    } else if (grossSalary <= 39999) {
+        nhif = 950;
+    } else if (grossSalary <= 44999) {
+        nhif = 1000;
+    } else if (grossSalary <= 49999) {
+        nhif = 1100;
+    } else if (grossSalary <= 59999) {
+        nhif = 1200;
+    } else if (grossSalary <= 69999) {
+        nhif = 1300;
+    } else if (grossSalary <= 79999) {
+        nhif = 1400;
+    } else if (grossSalary <= 89999) {
+        nhif = 1500;
+    } else if (grossSalary <= 99999) {
+        nhif = 1600;
+    } else {
+        nhif = 1700;
     }
 
-    //Calculate NSSF 
-    const nssf = grossSalary * NSSF_RATE;
+    // Calculate NSSF Deductions based on NSSF rates (2023)
+    const nssfRate = 0.06; // 6% of pensionable earnings
+    const nssfTierI = 6000; // Tier I limit
+    const nssfTierII = 18000; // Tier II limit
+    let nssf = 0;
+    if (grossSalary <= nssfTierI) {
+        nssf = grossSalary * nssfRate;
+    } else if (grossSalary <= nssfTierII) {
+        nssf = nssfTierI * nssfRate + (grossSalary - nssfTierI) * nssfRate;
+    } else {
+        nssf = nssfTierI * nssfRate + (nssfTierII - nssfTierI) * nssfRate;
+    }
 
-    //Calculate Net Salary
-    const netSalary =grossSalary - tax - nhif - nssf;
+    // Calculate Net Salary
+    const netSalary = grossSalary - (payee + nhif + nssf);
 
-    return {
-        grossSalary: grossSalary,
-        tax: tax,
-        nhif: nhif,
-        nssf: nssf,
-        netSalary: netSalary
-    };
+    // Output the results
+    console.log(`Gross Salary: ${grossSalary.toFixed(2)}`);
+    console.log(`Payee (Tax): ${payee.toFixed(2)}`);
+    console.log(`NHIF Deductions: ${nhif.toFixed(2)}`);
+    console.log(`NSSF Deductions: ${nssf.toFixed(2)}`);
+    console.log(`Net Salary: ${netSalary.toFixed(2)}`);
 }
 
-const grossSalary = 50000; //Replace with the actual gross salary
-const result = calculateNetSalary(grossSalary);
-
-console.log("Gross Salary:", result.grossSalary);
-console.log("PAYE Tax:", result.tax);
-console.log("NHIF Deduction:", result.nhif);
-console.log("NSSF Deduction:", result.nssf);
-console.log("Net Salary:", result.netSalary)
+// Call the function
+calculateNetSalary();
